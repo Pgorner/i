@@ -21,6 +21,9 @@ volumes:
 
 services:
   mariadb:
+    build:
+      context:
+        ./requirements/mariadb
     volumes:
       - wordpress_db:/var/lib/mysql
     networks:
@@ -28,6 +31,9 @@ services:
     restart: always
 
   wordpress:
+    build:
+      context:
+        ./requirements/wordpress
     depends_on:
       - mariadb
     volumes:
@@ -37,6 +43,9 @@ services:
     restart: always
 
   nginx:
+    build:
+      context:
+        ./requirements/nginx
     depends_on:
       - wordpress
     volumes:
@@ -46,3 +55,4 @@ services:
       - "443:443"
     networks:
       - inception
+
