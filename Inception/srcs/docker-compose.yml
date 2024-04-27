@@ -1,0 +1,48 @@
+version: '3.8'
+
+networks:
+  inception:
+    name: inception
+    driver: bridge
+
+volumes:
+  wordpress_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME}/data/wordpress_db
+  wordpress_files:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME}/data/wordpress_files
+
+services:
+  mariadb:
+    volumes:
+      - wordpress_db:/var/lib/mysql
+    networks:
+      - inception
+    restart: always
+
+  wordpress:
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress_files:/var/www/html
+    networks:
+      - inception
+    restart: always
+
+  nginx:
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress_files:/var/www/html
+      - wordpress_db:/var/lib/mysql
+    ports:
+      - "443:443"
+    networks:
+      - inception
